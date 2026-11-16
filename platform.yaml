@@ -1,0 +1,19 @@
+# hello: the platform's test project (specs/phase-3.md). Everything a real
+# project uses, as small as possible.
+name: hello
+http:
+  service: web
+  port: 8000
+  health: /health
+resources:
+  prod: { memory: 128m }
+  dev: { memory: 128m }
+needs:
+  postgres: true
+auth: oidc
+secrets: [HELLO_GREETING]
+commands:
+  migrate: ["python", "-m", "hello.migrate"]
+  seed: ["python", "-m", "hello.seed"]
+jobs:
+  tick: { schedule: "*/5 * * * *", service: web, command: ["python", "-m", "hello.tick"] }
